@@ -154,5 +154,5 @@ gcd' x y | x < 0     = gcd' (-x) y
          | y < 0     = gcd' x (-y)
          | y < x     = gcd'' y x
          | otherwise = gcd'' x y
-gcd'' 0 y = y
-gcd'' x y = gcd'' (y `mod` x) x
+  where gcd'' 0 y = y
+        gcd'' x y = gcd'' (y `mod` x) x
