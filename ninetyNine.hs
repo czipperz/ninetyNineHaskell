@@ -156,3 +156,5 @@ gcd' x y | x < 0     = gcd' (-x) y
          | otherwise = gcd'' x y
   where gcd'' 0 y = y
         gcd'' x y = gcd'' (y `mod` x) x
+
+-- Now moving on to 54 (<https://wiki.haskell.org/99_questions/54A_to_60>)
