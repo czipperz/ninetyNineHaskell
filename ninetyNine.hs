@@ -157,4 +157,26 @@ gcd' x y | x < 0     = gcd' (-x) y
   where gcd'' 0 y = y
         gcd'' x y = gcd'' (y `mod` x) x
 
--- Now moving on to 54 (<https://wiki.haskell.org/99_questions/54A_to_60>)
+-- Now moving on to 55 (<https://wiki.haskell.org/99_questions/54A_to_60>)
+type Tree a = Empty | Branch a (Tree a) (Tree a)  deriving (Show, Eq)
+cbalTree 0 = [Empty]
+cbalTree n = let (q, r) = (n - 1) `quotRem` 2 in
+  [Branch 'x' left right | i <- [q..q+r],
+   left  <- cbalTree i,
+   right <- cbalTree (n - i - 1)]
+
+symmetric Empty = True
+symmetric (Branch _ l r) = symmetric' l r
+  where symmetric' Empty Empty               = True
+        symmetric' (Branch _ a b) (Branch _ c d) = symmetric' a d && symmetric' b c
+        symmetric' _ _                       = False
+
+-- > construct [3, 2, 5, 7, 1]
+-- Branch 3 (Branch 2 (Branch 1 Empty Empty) Empty) (Branch 5 Empty (Branch 7 Empty Empty))
+
+construct xs = foldl construct' Empty xs
+  where construct' Empty x = Branch x Empty Empty
+        construct' t@(Branch y l r)
+          | x < y  = Branch (add l x) r
+          | x > y  = Branch l (add r x)
+          | x == y = t
