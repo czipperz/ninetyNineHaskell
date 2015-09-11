@@ -1,3 +1,5 @@
+module NinetyNine where
+
 import System.Random
 
 ---{{{ Start of 1-10
