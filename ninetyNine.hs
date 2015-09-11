@@ -156,9 +156,10 @@ gcd' x y | x < 0     = gcd' (-x) y
          | otherwise = gcd'' x y
   where gcd'' 0 y = y
         gcd'' x y = gcd'' (y `mod` x) x
+module NinetyNine where
 
 -- Now moving on to 55 (<https://wiki.haskell.org/99_questions/54A_to_60>)
-type Tree a = Empty | Branch a (Tree a) (Tree a)  deriving (Show, Eq)
+data Tree a = Empty | Branch a (Tree a) (Tree a)  deriving (Show, Eq)
 cbalTree 0 = [Empty]
 cbalTree n = let (q, r) = (n - 1) `quotRem` 2 in
   [Branch 'x' left right | i <- [q..q+r],
@@ -167,16 +168,18 @@ cbalTree n = let (q, r) = (n - 1) `quotRem` 2 in
 
 symmetric Empty = True
 symmetric (Branch _ l r) = symmetric' l r
-  where symmetric' Empty Empty               = True
-        symmetric' (Branch _ a b) (Branch _ c d) = symmetric' a d && symmetric' b c
-        symmetric' _ _                       = False
+  where symmetric' Empty Empty    = True
+        symmetric' (Branch _ a b)
+                   (Branch _ x y) = symmetric' a y && symmetric' b x
+        symmetric' _ _            = False
 
 -- > construct [3, 2, 5, 7, 1]
 -- Branch 3 (Branch 2 (Branch 1 Empty Empty) Empty) (Branch 5 Empty (Branch 7 Empty Empty))
 
-construct xs = foldl construct' Empty xs
-  where construct' Empty x = Branch x Empty Empty
-        construct' t@(Branch y l r)
-          | x < y  = Branch (add l x) r
-          | x > y  = Branch l (add r x)
-          | x == y = t
+construct xs = foldl add Empty xs
+  where add Empty            x = Branch x Empty Empty
+        add t@(Branch y l r) x =
+          case compare x y of
+            LT -> Branch y (add l x) r
+            GT -> Branch y l (add r x)
+            EQ -> t
